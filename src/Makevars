@@ -1,0 +1,29 @@
+PKG_CFLAGS=-I/usr/include -I${NETCDF_PATH}/include -I./fes2014/include
+PKG_LIBS=-L/usr/include -L${NETCDF_PATH}/lib -lnetcdf -L. -lfes
+
+.PHONY: all fes fes.git
+
+all: fes $(SHLIB)
+
+fes: fes.git
+	@echo "- Building FES2014"; \
+	mkdir -p fes2014/build && \
+	cd fes2014/build && \
+	cmake .. -DBUILD_SHARED_LIBS=on && \
+	make -s fes && \
+	cd ../../ && \
+	cp fes2014/build/src/libfes.so ./
+
+fes.git:
+	@echo "- Fetching FES2014"; \
+	if [ ! -d "fes2014" ]; then \
+		git clone https://bitbucket.org/cnes_aviso/fes fes2014 && \
+		cd fes2014 && \
+		git checkout a48890f1757d735949c78511d71735647b36bc0e && \
+		cd ../; \
+	fi && \
+	cd fes2014 && \
+	git reset --hard && \
+	git apply ../../patches/fes2014-001.diff && \
+	git apply ../../patches/fes2014-002.diff && \
+	cd ../

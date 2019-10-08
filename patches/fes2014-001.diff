@@ -1,0 +1,19 @@
+diff --git a/src/grid.c b/src/grid.c
+index 18dd16c..1ed1601 100644
+--- a/src/grid.c
++++ b/src/grid.c
+@@ -465,12 +465,8 @@ int interp(fes_handler* fes, const double lat, const double lon) {
+   size_t n;
+   fes_double_complex c;
+ 
+-  if (!CONTAINS(
+-      fes->west_lon, lon,
+-      fes->east_lon) || !CONTAINS (fes->south_lat, lat, fes->north_lat)) {
+-    if (_get_nearest_points(fes, lat, lon))
+-      return 1;
+-  }
++  if (_get_nearest_points(fes, lat, lon))
++    return 1;
+ 
+   /* The zone required is not in the grid */
+   if (!fes->in_grid)

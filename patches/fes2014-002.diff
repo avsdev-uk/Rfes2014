@@ -1,0 +1,18 @@
+diff --git a/src/grid.c b/src/grid.c
+index 18dd16c..6d1b383 100644
+--- a/src/grid.c
++++ b/src/grid.c
+@@ -617,7 +617,13 @@ int load_grid(const char* const path, const unsigned int n,
+ 
+     free(amp);
+     free(pha);
++
++    /* Don't need the netcdf file anymore, close it */
++    nc_close(nc->id);
+   } else {
++    /* Store the netcdf file handle.
++     * It will be used for access later and is closed in fes.c::fes_delete()
++     */
+     fes->grid.file[n] = *nc;
+   }
+ 

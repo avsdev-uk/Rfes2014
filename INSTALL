@@ -1,0 +1,23 @@
+
+Pre-requisites
+---------------
+- [R v3.4.0+](https://www.r-project.org/)
+- [netCDF4](https://github.com/Unidata/netcdf-c) (see known issues in README.md)
+
+How to install
+---------------
+When installing on a system with netCDF installed in a normal location (ie /usr) then all that is required is:
+```
+# From the directory above Rfes2014
+R CMD INSTALL Rfes2014
+```
+
+To build & install when netCDF installed elsewhere (eg `/opt/netcdf4`):
+```
+export NETCDF_PATH=/opt/netcdf4 LD_LIBRARY_PATH=${NETCDF_PATH}/lib R CMD INSTALL Rfes2014
+```
+To use the package when netCDF is installed elsewhere, remember to use `LD_LIBRARY_PATH` when calling R:
+```
+NETCDF_PATH=/opt/netcdf4 LD_LIBRARY_PATH=${NETCDF_PATH}/lib R
+```
+If you're using Windows: fend for yourself!
