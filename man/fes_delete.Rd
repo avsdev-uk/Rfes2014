@@ -16,8 +16,10 @@ None
 Cleans up a FES2014 instance
 }
 \examples{
+\dontrun{
 hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
 fes_delete(hdl)
+}
 
 }
 \seealso{

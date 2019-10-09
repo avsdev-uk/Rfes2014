@@ -4,9 +4,19 @@ Title: R wrapper for the FES2014 library provided by Aviso
 Version: 1.0.0
 Date: 2019-10-03
 Authors@R: person("Craig", "Williams", email = "craig@avsdev.uk", role = c("aut", "cre"))
-Description: R wrapper for the FES2014 c library provided by Aviso, see https://bitbucket.org/cnes_aviso/fes/src
-SystemRequirements: netcdf-c libraries and headers (https://github.com/Unidata/netcdf-c), cmake (http://www.cmake.org)
-License: GPL (>= 2) + file LICENSE
+Author: Craig Williams <craig@avsdev.uk>
+Maintainer: Craig Williams <craig@avsdev.uk>
+Description: R wrapper for the FES2014 c library provided by Aviso.
+Acknowledgements: FES2014 was produced by NOVELTIS, LEGOS, CLS Space Oceanography
+  Division and CNES. It is distributed by AVISO, with support from CNES
+  (http://www.aviso.altimetry.fr/)
+SystemRequirements:
+  netcdf-c libraries and headers (https://github.com/Unidata/netcdf-c),
+  cmake (http://www.cmake.org)
+License: GPL-2 | GPL-3 | file LICENSE
 Depends: R (>= 3.1.0)
+Imports: dplyr
+NeedsCompilation: yes
+OS_type: unix
 Collate: Rfes2014-package.R Rfes2014.R
 RoxygenNote: 6.1.1

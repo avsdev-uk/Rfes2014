@@ -6,7 +6,7 @@
 \alias{Rfes2014-package}
 \title{Rfes2014: R wrapper for the FES2014 library provided by Aviso}
 \description{
-R wrapper for the FES2014 c library provided by Aviso, see https://bitbucket.org/cnes_aviso/fes/src
+R wrapper for the FES2014 c library provided by Aviso.
 }
 \details{
 The Rfes2014 package provides an R wrapper around the FES2014 library made
@@ -15,7 +15,8 @@ available by Aviso.
 There are 3 main functions to Rfes2014:
 \itemize{
   \item \code{\link{fes_new}}: Create a new FES2014 instance
-  \item \code{\link{fes_calculate}}: Request FES2014 to do a calculation
+  \item \code{\link{fes_calculate}}: Request FES2014 instance do a
+    calculation
   \item \code{\link{fes_delete}}: Clean up the FES2014 instance
 }
 }

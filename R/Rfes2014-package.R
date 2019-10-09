@@ -9,7 +9,8 @@
 #' There are 3 main functions to Rfes2014:
 #' \itemize{
 #'   \item \code{\link{fes_new}}: Create a new FES2014 instance
-#'   \item \code{\link{fes_calculate}}: Request FES2014 to do a calculation
+#'   \item \code{\link{fes_calculate}}: Request FES2014 instance do a
+#'     calculation
 #'   \item \code{\link{fes_delete}}: Clean up the FES2014 instance
 #' }
 #'

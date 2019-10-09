@@ -27,3 +27,7 @@ fes.git:
 	git apply ../../patches/fes2014-001.diff && \
 	git apply ../../patches/fes2014-002.diff && \
 	cd ../
+
+clean:
+	rm -rf $(SHLIB) $(OBJECTS); \
+	rm -rf fes2014/build libfes.so

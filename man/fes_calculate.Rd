@@ -11,28 +11,30 @@
 \usage{
 fes_calculate(hdl, ...)
 
-\method{fes_calculate}{double}(hdl, lat, long, epoch_sec)
+\method{fes_calculate}{double}(hdl, lat, long, epoch_sec, ...)
 
-\method{fes_calculate}{list}(hdl, lat, long, epoch_sec)
+\method{fes_calculate}{list}(hdl, lat, long, epoch_sec, ...)
 
 \method{fes_calculate}{data.frame}(hdl, data, epoch_sec = NULL,
-  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec")
+  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...)
 
 \method{fes_calculate}{matrix}(hdl, data, epoch_sec = NULL,
-  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec")
+  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...)
 
 \method{fes_calculate}{tbl_df}(hdl, data, epoch_sec = NULL,
-  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec")
+  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...)
 }
 \arguments{
 \item{hdl}{<extptr>; a FES2014 handle}
 
-\item{lat}{double; a double representing latitudes}
+\item{...}{Parameters passed to generic methods}
 
-\item{long}{double; a double representing longitudes}
+\item{lat}{double/list; a double (or list of) representing latitudes}
 
-\item{epoch_sec}{integer; an integer representing seconds since POSIX
-epoch (1970/01/01 00:00:00 UTC). Negative numbers are accepted.}
+\item{long}{double/list; a double (or list of) representing longitudes}
+
+\item{epoch_sec}{integer/list; an integer (or list of) representing seconds
+since POSIX epoch (1970/01/01 00:00:00 UTC). Negative numbers are accepted}
 
 \item{data}{data.frame/tibble/matrix; a data.frame, matrix or tibble
 containing 3 columns (lat/lon/epoch_sec) or 2 columns (lat/long) with the
@@ -43,12 +45,6 @@ epoch_sec parameter. Column names can be provided as extra parameters.}
 \item{lonCol}{string; name of the longitude column in data}
 
 \item{epochSecCol}{string; name of the timestamps column in data}
-
-\item{lat}{list; a list of latitudes as doubles}
-
-\item{long}{list; a list of longitudes as doubles}
-
-\item{epoch_sec}{list; a list of timestamps (seconds since epoch) as integers}
 }
 \value{
 A list containing h, hLongPeriod and samples for the lat, long,
@@ -61,6 +57,7 @@ A data.frame, matrix or tibble containing h, hLongPeriod and samples
 Performs a calculation with a FES2014 instance
 }
 \examples{
+\dontrun{
 hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
 res <- fes_calculate(hdl, 50.10, -2.40, 1570536000)
 print(res)
@@ -80,6 +77,7 @@ df <- data.frame(
 )
 res <- fes_calculate(hld, df, lonCol = "long")
 res <- fes_calculate(hld, dplyr::as_tibble(df), lonCol = "long")
+}
 
 }
 \seealso{

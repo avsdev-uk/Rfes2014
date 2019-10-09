@@ -5,6 +5,7 @@
 #' @return None
 #'
 #' @examples
+#' \dontrun{
 #' fes_debug(TRUE)
 #' hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
 #' # Created FES handle: 9c5b5020
@@ -13,6 +14,7 @@
 #' # Result: -24.965188 0.210749 4
 #' fes_delete(hdl)
 #' # Destroying FES handle: 9c5b5020
+#' }
 #'
 #' \dontrun{
 #' fes_debug(TRUE)
@@ -32,8 +34,8 @@ fes_debug <- function(enable) {
 
 #' Create a handle to a new FES2014 instance
 #'
-#' FES2014 handles are used in \code{\link{fes_calculate()}} and can either be
-#' cleaned up manually with \code{\link{fes_delete()}} or are finalized
+#' FES2014 handles are used in \code{\link{fes_calculate}} and can either be
+#' cleaned up manually with \code{\link{fes_delete}} or are finalized
 #' automatically when the R session is destroyed.
 #'
 #' DO NOT SAVE THE HANDLE IN RDATA FILES
@@ -47,7 +49,9 @@ fes_debug <- function(enable) {
 #' @seealso \code{\link{fes_delete}}
 #'
 #' @examples
+#' \dontrun{
 #' hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
+#' }
 #'
 #' @export
 fes_new <- function(tide_type, access_mode, ini_file) {
@@ -83,8 +87,10 @@ fes_new <- function(tide_type, access_mode, ini_file) {
 #' @seealso \code{\link{fes_new}}
 #'
 #' @examples
+#' \dontrun{
 #' hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
 #' fes_delete(hdl)
+#' }
 #'
 #' @export
 fes_delete <- function(hdl) {
@@ -99,10 +105,12 @@ fes_delete <- function(hdl) {
 #' Performs a calculation with a FES2014 instance
 #'
 #' @param hdl <extptr>; a FES2014 handle
+#' @param ... Parameters passed to generic methods
 #'
 #' @seealso \code{\link{fes_new}}; \code{\link[base]{as.POSIXct}} for timestamps
 #'
 #' @examples
+#' \dontrun{
 #' hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
 #' res <- fes_calculate(hdl, 50.10, -2.40, 1570536000)
 #' print(res)
@@ -122,6 +130,7 @@ fes_delete <- function(hdl) {
 #' )
 #' res <- fes_calculate(hld, df, lonCol = "long")
 #' res <- fes_calculate(hld, dplyr::as_tibble(df), lonCol = "long")
+#' }
 #'
 #' @export
 fes_calculate <- function(hdl, ...) {
@@ -131,16 +140,16 @@ fes_calculate <- function(hdl, ...) {
 
 #' @rdname fes_calculate
 #'
-#' @param lat double; a double representing latitudes
-#' @param long double; a double representing longitudes
-#' @param epoch_sec integer; an integer representing seconds since POSIX
-#'   epoch (1970/01/01 00:00:00 UTC). Negative numbers are accepted.
+#' @param lat double/list; a double (or list of) representing latitudes
+#' @param long double/list; a double (or list of) representing longitudes
+#' @param epoch_sec integer/list; an integer (or list of) representing seconds
+#'   since POSIX epoch (1970/01/01 00:00:00 UTC). Negative numbers are accepted
 #'
 #' @return A list containing h, hLongPeriod and samples for the lat, long,
 #'   timestamp tuple
 #'
 #' @export
-fes_calculate.double <- function(hdl, lat, long, epoch_sec) {
+fes_calculate.double <- function(hdl, lat, long, epoch_sec, ...) {
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
   }
@@ -166,15 +175,11 @@ fes_calculate.double <- function(hdl, lat, long, epoch_sec) {
 
 #' @rdname fes_calculate
 #'
-#' @param lat list; a list of latitudes as doubles
-#' @param long list; a list of longitudes as doubles
-#' @param epoch_sec list; a list of timestamps (seconds since epoch) as integers
-#'
 #' @return A data.frame, matrix or tibble containing h, hLongPeriod and samples
 #'   for each lat, long, timestamp tuple
 #'
 #' @export
-fes_calculate.list <- function(hdl, lat, long, epoch_sec) {
+fes_calculate.list <- function(hdl, lat, long, epoch_sec, ...) {
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
   }
@@ -242,7 +247,7 @@ fes_calculate.list <- function(hdl, lat, long, epoch_sec) {
 #' @export
 fes_calculate.data.frame <- function(
   hdl, data, epoch_sec = NULL,
-  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec"
+  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...
 ) {
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
@@ -271,7 +276,7 @@ fes_calculate.data.frame <- function(
 #' @export
 fes_calculate.matrix <- function(
   hdl, data, epoch_sec = NULL,
-  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec"
+  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...
 ) {
   return(as.matrix(fes_calculate.data.frame(
       hdl, as.data.frame(data), epoch_sec,
@@ -280,11 +285,15 @@ fes_calculate.matrix <- function(
 }
 
 #' @rdname fes_calculate
+#' @importFrom dplyr as_tibble
+#' @importFrom dplyr pull
 #' @export
 fes_calculate.tbl_df <- function(
   hdl, data, epoch_sec = NULL,
-  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec"
+  latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...
 ) {
+  requireNamespace("dplyr")
+
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
   }

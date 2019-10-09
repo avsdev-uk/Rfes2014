@@ -17,15 +17,17 @@ fes_new(tide_type, access_mode, ini_file)
 <extpointer> A handle to a FES2014 instance
 }
 \description{
-FES2014 handles are used in \code{\link{fes_calculate()}} and can either be
-cleaned up manually with \code{\link{fes_delete()}} or are finalized
+FES2014 handles are used in \code{\link{fes_calculate}} and can either be
+cleaned up manually with \code{\link{fes_delete}} or are finalized
 automatically when the R session is destroyed.
 }
 \details{
 DO NOT SAVE THE HANDLE IN RDATA FILES
 }
 \examples{
+\dontrun{
 hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
+}
 
 }
 \seealso{

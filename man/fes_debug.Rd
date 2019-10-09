@@ -16,6 +16,7 @@ None
 Enables debug print statements showing the process flow of Rfes2014
 }
 \examples{
+\dontrun{
 fes_debug(TRUE)
 hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
 # Created FES handle: 9c5b5020
@@ -24,6 +25,7 @@ fes_calculate(hdl, 50.10, -2.40, 1570536000)
 # Result: -24.965188 0.210749 4
 fes_delete(hdl)
 # Destroying FES handle: 9c5b5020
+}
 
 \dontrun{
 fes_debug(TRUE)

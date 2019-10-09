@@ -9,5 +9,7 @@ export(fes_calculate)
 export(fes_debug)
 export(fes_delete)
 export(fes_new)
+importFrom(dplyr,as_tibble)
+importFrom(dplyr,pull)
 useDynLib(libfes); useDynLib(Rfes2014)
 
