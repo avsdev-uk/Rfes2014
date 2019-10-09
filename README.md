@@ -4,7 +4,7 @@ Pre-requisites
 ---------------
 - [R v3.4.0+](https://www.r-project.org/)
 - [netCDF4](https://github.com/Unidata/netcdf-c) (see known issues)
-- [fes2014](https://bitbucket.org/cnes_aviso/fes) (bundled in this package, see known issues)
+- [FES2014](https://bitbucket.org/cnes_aviso/fes) (fetched by this package, see known issues)
 
 How to install
 ---------------
