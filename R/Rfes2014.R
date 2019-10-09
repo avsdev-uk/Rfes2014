@@ -27,7 +27,7 @@
 #'
 #' @export
 fes_debug <- function(enable) {
-  .Call("fes2014_debug", as.logical(enable))
+  .Call("fes2014_debug", as.logical(enable), PACKAGE = "Rfes2014")
   invisible(0)
 }
 
@@ -72,7 +72,8 @@ fes_new <- function(tide_type, access_mode, ini_file) {
     "fes2014_new",
     as.integer(tt),
     as.integer(am),
-    as.character(ini_file)
+    as.character(ini_file),
+    PACKAGE = "Rfes2014"
   )
 
   return(hdl)
@@ -97,7 +98,7 @@ fes_delete <- function(hdl) {
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
   }
-  .Call("fes2014_delete", hdl)
+  .Call("fes2014_delete", hdl, PACKAGE = "Rfes2014")
   invisible(0)
 }
 
@@ -167,7 +168,8 @@ fes_calculate.double <- function(hdl, lat, long, epoch_sec, ...) {
     "fes2014_calculate_one",
     hdl,
     as.double(lat), as.double(long),
-    as.integer(epoch_sec)
+    as.integer(epoch_sec),
+    PACKAGE = "Rfes2014"
   )
 
   return(ret)
@@ -222,7 +224,8 @@ fes_calculate.list <- function(hdl, lat, long, epoch_sec, ...) {
     hdl,
     as.double(lat), as.double(long),
     as.integer(epoch_sec),
-    as.integer(length(lat))
+    as.integer(length(lat)),
+    PACKAGE = "Rfes2014"
   )
 
   return(as.data.frame(cbind(
