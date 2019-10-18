@@ -13,9 +13,10 @@ static FES open_hdls[MAX_HANDLES + 1];
 static const double epoch_offset = (2440587.5 - 2433282.5);
 
 typedef struct {
-	int debug;
+	int debug_handle;
+	int debug_calculate;
 } Options;
-static Options options = { 0 };
+static Options options = { 0, 0 };
 
 
 const char const * const _err_string(int errno) {
@@ -38,12 +39,27 @@ const char const * const _err_string(int errno) {
 	}
 }
 
-void fes2014_debug(SEXP r_enable) {
+
+void fes2014_debugHandles(SEXP r_enable) {
 	if (Rf_asLogical(r_enable)) {
-		options.debug = 1;
+		options.debug_handle = 1;
 	} else {
-		options.debug = 0;
+		options.debug_handle = 0;
 	}
+}
+SEXP fes2014_isDebugHandlesEnabled() {
+	return Rf_ScalarLogical(options.debug_handle);
+}
+
+void fes2014_debugCalculate(SEXP r_enable) {
+	if (Rf_asLogical(r_enable)) {
+		options.debug_calculate = 1;
+	} else {
+		options.debug_calculate = 0;
+	}
+}
+SEXP fes2014_isDebugCalculateEnabled() {
+	return Rf_ScalarLogical(options.debug_calculate);
 }
 
 
@@ -70,7 +86,7 @@ SEXP fes2014_new(SEXP r_tideType, SEXP r_accessMode, SEXP r_iniFile) {
 	}
 
 	*(open_hdls + num_hdls++) = fes_hdl;
-	if (options.debug) {
+	if (options.debug_handle) {
 		Rprintf("Created FES handle: %08x\n", fes_hdl);
 	}
 
@@ -95,7 +111,7 @@ void fes2014_delete(SEXP r_hdl) {
 		}
 	}
 
-	if (options.debug) {
+	if (options.debug_handle) {
 		Rprintf("Destroying FES handle: %08x\n", fes_hdl);
 	}
 	fes_delete(fes_hdl);
@@ -108,7 +124,7 @@ static void _fes2014_finalize(SEXP r_hdl) {
 
 	FES fes_hdl = (FES)R_ExternalPtrAddr(r_hdl);
 
-	if (options.debug) {
+	if (options.debug_handle) {
 		Rprintf("Finalizing handle: %08x\n", fes_hdl);
 	}
     fes2014_delete(r_hdl);
@@ -124,7 +140,7 @@ SEXP fes2014_calculate_one(SEXP r_hdl, SEXP r_lat, SEXP r_lon, SEXP r_epochSec) 
 	double h = NA_REAL, h_long_period = NA_REAL;
 	int err, min_num_points = NA_INTEGER;
 
-	if (options.debug) {
+	if (options.debug_calculate) {
 		Rprintf("Calculating for: %f %f %f\n", lat, lon, julianTs);
 	}
 
@@ -132,12 +148,12 @@ SEXP fes2014_calculate_one(SEXP r_hdl, SEXP r_lat, SEXP r_lon, SEXP r_epochSec) 
 	if (res == 0) {
 		min_num_points = fes_min_number(fes_hdl);
 
-		if (options.debug) {
+		if (options.debug_calculate) {
 			Rprintf("Result: %f %f %d\n", h, h_long_period, min_num_points);
 		}
 	} else {
 		err = (int)fes_errno(fes_hdl);
-		if (options.debug) {
+		if (options.debug_calculate) {
 			Rprintf("Error: %s\n", _err_string(-err));
 		}
 
@@ -186,7 +202,7 @@ SEXP fes2014_calculate_many(SEXP r_hdl, SEXP r_lat, SEXP r_lon, SEXP r_epochSec,
 	double *hLongPeriodVecPtr = REAL(r_hLongPeriodVec);
 	int *samplesVecPtr = INTEGER(r_samplesVec);
 
-	if (options.debug) {
+	if (options.debug_calculate) {
 		Rprintf("Processing %d rows\n", nrow);
 	}
 
@@ -195,7 +211,7 @@ SEXP fes2014_calculate_many(SEXP r_hdl, SEXP r_lat, SEXP r_lon, SEXP r_epochSec,
 	for (ii = 0; ii < nrow; ii++) {
 		julianTs = (*(epochSecPtr + ii) / 86400.0) + epoch_offset;
 
-		if (options.debug) {
+		if (options.debug_calculate) {
 			Rprintf(
 				"\t[%d] Calculating for: %f %f %f\n",
 				ii,
@@ -217,7 +233,7 @@ SEXP fes2014_calculate_many(SEXP r_hdl, SEXP r_lat, SEXP r_lon, SEXP r_epochSec,
 		if (res == 0) {
 			*(samplesVecPtr + ii) = fes_min_number(fes_hdl);
 
-			if (options.debug) {
+			if (options.debug_calculate) {
 				Rprintf(
 					"\t[%d] Result: %f %f %d\n",
 					ii,
@@ -229,7 +245,7 @@ SEXP fes2014_calculate_many(SEXP r_hdl, SEXP r_lat, SEXP r_lon, SEXP r_epochSec,
 		} else {
 			err = (int)fes_errno(fes_hdl);
 
-			if (options.debug) {
+			if (options.debug_calculate) {
 				Rprintf("\t[%d] Error: %s\n", ii, _err_string(-err));
 			}
 

@@ -1,4 +1,4 @@
-#' Enables debug print statements showing the process flow of Rfes2014
+#' Enables FES2014 handle debugging
 #'
 #' @param enable logical; TRUE to enable, FALSE to disable
 #'
@@ -10,8 +10,6 @@
 #' hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
 #' # Created FES handle: 9c5b5020
 #' fes_calculate(hdl, 50.10, -2.40, 1570536000)
-#' # Calculating for: 50.100000 -2.400000 25482.500000
-#' # Result: -24.965188 0.210749 4
 #' fes_delete(hdl)
 #' # Destroying FES handle: 9c5b5020
 #' }
@@ -26,9 +24,77 @@
 #' }
 #'
 #' @export
-fes_debug <- function(enable) {
-  .Call("fes2014_debug", as.logical(enable), PACKAGE = "Rfes2014")
+fes_debugHandles <- function(enable) {
+  .Call("fes2014_debugHandles", as.logical(enable), PACKAGE = "Rfes2014")
   invisible(0)
+}
+
+#' Checks if debugging handles is enabled
+#'
+#' @return logical; TRUE if debug is enabled, FALSE if debug is disabled
+#'
+#' @examples
+#' fes_isDebugHandlesEnabled()
+#' fes_debugHandles(TRUE)
+#' fes_isDebugHandlesEnabled()
+#'
+#' @export
+fes_isDebugHandlesEnabled <- function() {
+  return(.Call("fes2014_isDebugHandlesEnabled", PACKAGE = "Rfes2014"))
+}
+
+#' Enables debug print statements showing the calculation flow of Rfes2014
+#'
+#' @param enable logical; TRUE to enable, FALSE to disable
+#'
+#' @return None
+#'
+#' @examples
+#' \dontrun{
+#' fes_debug(TRUE)
+#' hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
+#' fes_calculate(hdl, 50.10, -2.40, 1570536000)
+#' # UseMethod Type: double
+#' # Using generic: fes_calculate.double
+#' # Calculating for: 50.100000 -2.400000 25482.500000
+#' # Result: -24.965188 0.210749 4
+#' # Calculating for: 50.100000 -2.400000 25482.500000
+#' # Result: -24.965188 0.210749 4
+#' fes_delete(hdl)
+#' }
+#'
+#' \dontrun{
+#' fes_debug(TRUE)
+#' hdl <- fes_new("ocean", "memory", "data/fes2014/eastward_velocity.ini")
+#' fes_calculate(hdl, c(50.10, 50.10), c(-2.50, -2.40), c(1570536000, 1570536000))
+#' # UseMethod Type: double; Class: numeric; Length: 3
+#' # Using generic: fes_calculate.list
+#' # Processing 2 rows
+#' #   [0] Calculating for: 50.100000 -2.500000 25482.500000
+#' #   [0] Result: -22.001810 0.227711 4
+#' #   [1] Calculating for: 50.100000 -2.400000 25482.500000
+#' #   [1] Result: -24.965188 0.210749 4
+#' fes_delete(hdl)
+#' }
+#'
+#' @export
+fes_debugCalculate <- function(enable) {
+  .Call("fes2014_debugCalculate", as.logical(enable), PACKAGE = "Rfes2014")
+  invisible(0)
+}
+
+#' Checks if calculation debug output is enabled
+#'
+#' @return logical; TRUE if debug is enabled, FALSE if debug is disabled
+#'
+#' @examples
+#' fes_isDebugCalculateEnabled()
+#' fes_debug(TRUE)
+#' fes_isDebugCalculateEnabled()
+#'
+#' @export
+fes_isDebugCalculateEnabled <- function() {
+  return(.Call("fes2014_isDebugCalculateEnabled", PACKAGE = "Rfes2014"))
 }
 
 
@@ -135,7 +201,15 @@ fes_delete <- function(hdl) {
 #'
 #' @export
 fes_calculate <- function(hdl, ...) {
-  params <- as.list(...)
+  params <- list(...)
+  if (fes_isDebugCalculateEnabled()) {
+    cat("UseMethod Type: ", typeof(params[[1]]), "; ", sep = "")
+    cat("Class: ", class(params[[1]]), "; ", sep = "")
+    cat("Length: ", length(params), "\n", sep = "")
+  }
+  if (typeof(params[[1]]) == "double" && length(params) > 1) {
+    return(do.call("fes_calculate.list", c(list(hdl), params)))
+  }
   UseMethod("fes_calculate", params[[1]])
 }
 
@@ -151,6 +225,10 @@ fes_calculate <- function(hdl, ...) {
 #'
 #' @export
 fes_calculate.double <- function(hdl, lat, long, epoch_sec, ...) {
+  if (fes_isDebugCalculateEnabled()) {
+    cat("Using generic: fes_calculate.double\n");
+  }
+
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
   }
@@ -182,6 +260,10 @@ fes_calculate.double <- function(hdl, lat, long, epoch_sec, ...) {
 #'
 #' @export
 fes_calculate.list <- function(hdl, lat, long, epoch_sec, ...) {
+  if (fes_isDebugCalculateEnabled()) {
+    cat("Using generic: fes_calculate.list\n");
+  }
+
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
   }
@@ -252,6 +334,10 @@ fes_calculate.data.frame <- function(
   hdl, data, epoch_sec = NULL,
   latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...
 ) {
+  if (fes_isDebugCalculateEnabled()) {
+    cat("Using generic: fes_calculate.data.frame\n");
+  }
+
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")
   }
@@ -281,6 +367,10 @@ fes_calculate.matrix <- function(
   hdl, data, epoch_sec = NULL,
   latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...
 ) {
+  if (fes_isDebugCalculateEnabled()) {
+    cat("Using generic: fes_calculate.matrix\n");
+  }
+
   return(as.matrix(fes_calculate.data.frame(
       hdl, as.data.frame(data), epoch_sec,
       latCol, lonCol, epochSecCol
@@ -296,6 +386,10 @@ fes_calculate.tbl_df <- function(
   latCol = "lat", lonCol = "lon", epochSecCol = "epoch_sec", ...
 ) {
   requireNamespace("dplyr")
+
+  if (fes_isDebugCalculateEnabled()) {
+    cat("Using generic: fes_calculate.tbl_df\n");
+  }
 
   if (typeof(hdl) != "externalptr") {
     stop("hdl must be handle created by fes_new")

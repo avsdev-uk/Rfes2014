@@ -1,7 +1,7 @@
 Package: Rfes2014
 Type: Package
 Title: R wrapper for the FES2014 library provided by Aviso
-Version: 1.0.0
+Version: 1.1.0
 Date: 2019-10-03
 Authors@R: person("Craig", "Williams", email = "craig@avsdev.uk", role = c("aut", "cre"))
 Author: Craig Williams <craig@avsdev.uk>
